@@ -670,6 +670,9 @@ class PyTensorflow(Package, CudaPackage):
             if '+cuda' in spec:
                 args.append('--config=cuda')
 
+            if '+rocm' in spec:
+                args.append('--config=rocm')
+
             if '~aws' in spec:
                 args.append('--config=noaws')
 
