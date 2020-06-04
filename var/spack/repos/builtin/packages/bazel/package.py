@@ -152,6 +152,7 @@ class Bazel(Package):
                 # Show (formatted) subcommands being executed
                 ' --subcommands=pretty_print'
                 ' --jobs={0}'.format(make_jobs))
+        env.set('BAZEL_LINKLIBS', '-l%:libstdc++.a')
 
     def bootstrap(self, spec, prefix):
         bash = which('bash')
