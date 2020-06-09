@@ -128,6 +128,9 @@ class Bazel(Package):
     patch('compile-0.4.patch',  when='@0.4:0.5')
     patch('compile-0.3.patch',  when='@:0.3')
 
+    # Workaround suggested by @aweits (https://github.com/spack/spack/pull/15698#discussion_r398811525)
+    patch('disabledepcheck.patch')
+
     phases = ['bootstrap', 'install']
 
     def url_for_version(self, version):
@@ -152,6 +155,7 @@ class Bazel(Package):
                 # Show (formatted) subcommands being executed
                 ' --subcommands=pretty_print'
                 ' --jobs={0}'.format(make_jobs))
+        env.set('BAZEL_LINKLIBS', '-l%:libstdc++.a')
 
     def bootstrap(self, spec, prefix):
         bash = which('bash')
