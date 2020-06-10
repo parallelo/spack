@@ -162,7 +162,6 @@ class PyTensorflow(Package, CudaPackage):
     depends_on('py-protobuf@3.0.0', type=('build', 'run'), when='@0.11.0')
     depends_on('py-protobuf@3.0.0b2', type=('build', 'run'), when='@0.7.1:0.10')
     depends_on('py-protobuf@3.0.0a3', type=('build', 'run'), when='@0.6:0.7.0')
-    depends_on('protobuf')
     # tensorboard
     # tensorflow-estimator
     depends_on('py-termcolor@1.1.0:', type=('build', 'run'), when='@1.6:')
@@ -509,11 +508,6 @@ class PyTensorflow(Package, CudaPackage):
         mkdirp(tmp_path)
         env.set('TEST_TMPDIR', tmp_path)
 
-        env.set('TF_SYSTEM_LIBS', 'com_google_protobuf')
-        # NOTE: INCLUDEDIR is not just relevant to protobuf
-        # see third_party/systemlibs/jsoncpp.BUILD
-        env.set('INCLUDEDIR', spec['protobuf'].prefix.include)
-
     def configure(self, spec, prefix):
         # NOTE: configure script is interactive. If you set the appropriate
         # environment variables, this interactivity is skipped. If you don't,
@@ -642,7 +636,6 @@ class PyTensorflow(Package, CudaPackage):
             # Ask bazel to explain what it's up to
             # Needs a filename as argument
             '--explain=explainlogfile.txt',
-            '--incompatible_no_support_tools_in_action_inputs=false',
             # Increase verbosity of explanation,
             '--verbose_explanations',
         ]
@@ -695,6 +688,9 @@ class PyTensorflow(Package, CudaPackage):
 
         if spec.satisfies('@2:'):
             args.append('--config=v2')
+
+        if spec.satisfies('%gcc@5:'):
+            args.append('--cxxopt=-D_GLIBCXX_USE_CXX11_ABI=0')
 
         args.append('//tensorflow/tools/pip_package:build_pip_package')
 
