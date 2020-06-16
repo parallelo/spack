@@ -378,6 +378,10 @@ class PyTensorflow(Package, CudaPackage):
         else:
             env.set('TF_NEED_ROCM', '0')
 
+        # Fix for Bazel builds on CentOS-7
+        # Details here: https://github.com/tensorflow/tensorflow/issues/35867
+        env.set('BAZEL_LINKLIBS', '-l%:libstdc++.a')
+
         # Do you wish to build TensorFlow with CUDA support?
         if '+cuda' in spec:
             env.set('TF_NEED_CUDA', '1')
